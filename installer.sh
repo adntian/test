@@ -265,8 +265,5 @@ echo '初始化完成'
 sleep 3
 echo '进入docker'
 
-cd ~/.shardeum && bash ./shell.sh
-echo '执行docker环境内命令'
-sleep 3
-sudo docker exec -it operator-cli start
+cd ~/.shardeum && sudo docker exec -it shardeum-dashboard operator-cli start
 echo '执行完成，请访问https://localhost:${DASHPORT}'
