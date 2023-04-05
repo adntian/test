@@ -18,9 +18,13 @@ SHMEXT=${3:-9001}
 SHMINT=${4:-10001}
 
 echo '开始初始化...'
+echo '更新apt'
 sudo apt update
+echo '安装apt-utils'
 sudo apt install -y apt-utils
+echo '安装docker'
 sudo apt install docker.io -y
+echo '安装docker-compose'
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 sudo chmod 666 /var/run/docker.sock
@@ -257,5 +261,12 @@ To use the Command Line Interface:
 
 EOF
 
+echo '初始化完成'
+sleep 3
+echo '进入docker'
 
-cd .shardeum && sudo docker exec -it shardeum-dashboard operator-cli gui start && operator-cli start
+cd ~/.shardeum && bash ./shell.sh
+echo '执行docker环境内命令'
+sleep 3
+sudo docker exec -it operator-cli start
+echo '执行完成，请访问https://localhost:${DASHPORT}'
