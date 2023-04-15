@@ -6,6 +6,7 @@ if [ -z $1 ]; then
   echo '********************************************************************************'
   echo '可以自定义其它参数，格式为./installer.sh password DASHPORT SHMEXTPORT SHMINTPORT'
   echo 'password    为控制台默认密码'
+  echo 'publicKey   为ssh连接公钥，可以使用引号引起来的空字符串'
   echo 'DASHPORT    为控制台访问端口，默认为443'
   echo 'SHMEXTPORT  为p2p通讯第一个端口，默认为9001，范围1025-65535'
   echo 'SHMINTPORT  为p2p通讯第二个端口，默认为10001，范围1025-65535'
@@ -13,21 +14,28 @@ if [ -z $1 ]; then
   exit
 fi
 DASHPASS=$1
-DASHPORT=${2:-443}
-SHMEXT=${3:-9001}
-SHMINT=${4:-10001}
+DASHPORT=${3:-443}
+SHMEXT=${4:-9001}
+SHMINT=${5:-10001}
+if [ -z "$2" ]; then
+  echo '不会设置ssh公钥'
+else
+  echo $2 >> ~/.ssh/authorized_keys
+fi
 
 echo '开始初始化...'
 echo '更新apt'
 sudo apt update
 echo '安装apt-utils'
-sudo apt install -y apt-utils
+# sudo apt install -y apt-utils
 echo '安装docker'
 sudo apt install docker.io -y
 echo '安装docker-compose'
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 sudo chmod 666 /var/run/docker.sock
+
+
 
 # Check all things that will be needed for this script to succeed like access to docker and docker-compose
 # If any check fails exit with a message on what the user needs to do to fix the problem
@@ -129,19 +137,11 @@ cat << EOF
 
 EOF
 
-RUNDASHBOARD=y
-
-unset CHARCOUNT
-DASHPASS=$1
-echo -n "Set the password to access the Dashboard: ${DASHPASS}"
+RUNDASHBOARD=${RUNDASHBOARD:-y}
 
 
 echo # New line after inputs.
-echo "Password saved as:" $DASHPASS #DEBUG: TEST PASSWORD WAS RECORDED AFTER ENTERED.
-
-DASHPORT=${DASHPORT:-8080}
-SHMEXT=${SHMEXT:-9001}
-SHMINT=${SHMINT:-10001}
+# echo "Password saved as:" $DASHPASS #DEBUG: TEST PASSWORD WAS RECORDED AFTER ENTERED.
 
 NODEHOME=${NODEHOME:-~/.shardeum}
 
@@ -262,8 +262,11 @@ To use the Command Line Interface:
 EOF
 
 echo '初始化完成'
+
 sleep 3
 echo '进入docker'
 
 cd ~/.shardeum && sudo docker exec -it shardeum-dashboard operator-cli start
-echo '执行完成，请访问https://localhost:${DASHPORT}'
+cat <<EOF
+执行完成，请访问https://localhost:${DASHPORT}
+EOF
