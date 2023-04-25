@@ -17,7 +17,7 @@ DASHPASS=$1
 DASHPORT=${3:-443}
 SHMEXT=${4:-9001}
 SHMINT=${5:-10001}
-INT_IP=$(ip addr show | grep 'inet ' | awk '{print $2}' | cut -d'/' -f1|grep 10)
+INT_IP=$(ip addr show $(ip route | awk '/default/ {print $5}') | awk '/inet/ {print $2}' | cut -d/ -f1 | head -n1)
 EXT_IP=$(curl -s http://checkip.dyndns.org | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b")
 if [ -z "$2" ]; then
   echo '不会设置ssh公钥'
