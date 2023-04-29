@@ -4,7 +4,7 @@ set -e
 if [ -z $1 ]; then
   echo '请输入默认密码，也可以自定义其它参数'
   echo '********************************************************************************'
-  echo '可以自定义其它参数，格式为./installer.sh password DASHPORT SHMEXTPORT SHMINTPORT'
+  echo '可以自定义其它参数，格式为./installer.sh password publicKey DASHPORT SHMEXTPORT SHMINTPORT'
   echo 'password    为控制台默认密码'
   echo 'publicKey   为ssh连接公钥，可以使用引号引起来的空字符串'
   echo 'DASHPORT    为控制台访问端口，默认为443'
