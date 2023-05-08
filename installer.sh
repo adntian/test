@@ -25,8 +25,7 @@ else
   echo $2 >> ~/.ssh/authorized_keys
 fi
 
-isUpdate=$(whereis docker | grep bin)
-if [ -z "isUpdate" ]; then
+if command -v docker &>/dev/null; then
   echo 'docker已经安装'
 else
   echo 'docker未安装，开始安装docker'
